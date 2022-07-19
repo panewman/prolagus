@@ -1,1 +1,2 @@
-{:deps {}}
+{:deps {org.clojure/core.async {:mvn/version "1.5.648"}
+        metosin/malli {:mvn/version "0.8.9"}}}
