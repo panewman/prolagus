@@ -263,7 +263,6 @@
       (cond
         (some? t) (let [state (assoc state ::p/last-token t)
                         t (with-meta t {::p/id id})]
-                    ;(clojure.pprint/pprint ["----->1 " (::p/last-token state) t])
                     (as/put! >chan t (fn [ok] (if ok (run-observable-x! <chan >chan state) (unsub-fn)))))
         (not (token-complete? last-token)) (as/put! >chan (with-meta (token-complete) {::p/id id}) (fn [ok] (unsub-fn)))
         :else nil))))
@@ -309,14 +308,13 @@
         (fn [t]
           (cond
             (token-control? t) (unsub-fn)
-            (and (token-complete? t) (> (count <observables) 1)) (do (unsub-fn) (run-observable-xs! <chan-control nil >chan state))
+            (and (token-complete? t) (>= (count <observables) 1)) (do (unsub-fn) (run-observable-xs! <chan-control nil >chan state))
             (some? t) (let [t (with-meta t {::p/id id})]
-                        ;(clojure.pprint/pprint ["----->1 " (::p/last-token state) t])
                         (as/put! >chan t (fn [ok] (if ok (run-observable-xs! <chan-control <chan >chan state) (unsub-fn)))))
             :else nil))))))
 
 (ml/=> run-observable-xs! [:function
-                           [:=> [:cat [:or type-chan :nil] type-chan
+                           [:=> [:cat type-chan [:or type-chan :nil] type-chan
                                  [:map [::p/<observables [:sequential [:tuple number? [:map [::p/sub-fn [:fn fn?]]]]]]]]
                             :any]])
 

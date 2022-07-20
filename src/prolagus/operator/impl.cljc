@@ -80,7 +80,6 @@
                     (ps/token-error? t) {::p/token t}
                     :else nil)
         continue-work (when (not complete?) {::p/continue-work combine-latest-work})]
-    #_(clojure.pprint/pprint ["combine-latest-work" (ps/token-next t) values (every? some? values) last-tokens])
     (merge {::p/state (merge state result-values)} token result-values continue-work)))
 
 (ml/=> combine-latest-work [:function
