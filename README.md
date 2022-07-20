@@ -5,85 +5,101 @@ Clojure/-Script asynchronous programming using clojure.async
 
 Example use:
 ```
-(def unsub-fn (prolagus.system/subscribe {::m/next #(clojure.pprint/pprint ["xyz next" %])
-                          ::m/error #(clojure.pprint/pprint ["xyz error" %])
-                          ::m/complete #(clojure.pprint/pprint ["xyz complete"])}
-                         (->> (interval 1500)
-                              (take 4))))
+(require '[prolagus.system :as ps])
+(require '[prolagus.operator :as po])
+(require '[prolagus :as p])
 
-(def unsub-fn (prolagus.system/subscribe {::m/next #(clojure.pprint/pprint ["xyz next" %])
-                     ::m/error #(clojure.pprint/pprint ["xyz error" %])
-                     ::m/complete #(clojure.pprint/pprint ["xyz complete"])}
-                    (->> (from [1 2 3 4 5]))))
-                      
-(def unsub-fn (prolagus.system/subscribe {::m/next #(clojure.pprint/pprint ["xyz next" %])
-                     ::m/error #(clojure.pprint/pprint ["xyz error" %])
-                     ::m/complete #(clojure.pprint/pprint ["xyz complete"])}
-                    (->> (from [1 2 3 4 5])
-                         (map inc))))
+(def unsub-fn (ps/subscribe {::p/next #(clojure.pprint/pprint ["xyz next" %])
+                             ::p/error #(clojure.pprint/pprint ["xyz error" %])
+                             ::p/complete #(clojure.pprint/pprint ["xyz complete"])}
+                            (->> (po/interval 1500)
+                                 (po/take 4))))
 
-(def unsub-fn (prolagus.system/subscribe {::m/next #(clojure.pprint/pprint ["xyz next" %])
-                     ::m/error #(clojure.pprint/pprint ["xyz error" %])
-                     ::m/complete #(clojure.pprint/pprint ["xyz complete"])}
-                    (->> (from [1 2 3 4 5])
-                         (buffer-count 2))))
+(def unsub-fn (ps/subscribe {::p/next #(clojure.pprint/pprint ["xyz next" %])
+                             ::p/error #(clojure.pprint/pprint ["xyz error" %])
+                             ::p/complete #(clojure.pprint/pprint ["xyz complete"])}
+                            (->> (po/from [1 2 3 4 5]))))
 
-(def unsub-fn (prolagus.system/subscribe {::m/next #(clojure.pprint/pprint ["xyz next" %])
-                     ::m/error #(clojure.pprint/pprint ["xyz error" %])
-                     ::m/complete #(clojure.pprint/pprint ["xyz complete"])}
-                    (->> (from [1 2 3 4 5 6 7 8])
-                         (take 4))))
+(def unsub-fn (ps/subscribe {::p/next #(clojure.pprint/pprint ["xyz next" %])
+                             ::p/error #(clojure.pprint/pprint ["xyz error" %])
+                             ::p/complete #(clojure.pprint/pprint ["xyz complete"])}
+                            (->> (po/from [1 2 3 4 5])
+                                 (po/map inc))))
 
-(def unsub-fn (prolagus.system/subscribe {::m/next #(clojure.pprint/pprint ["xyz next" %])
-                     ::m/error #(clojure.pprint/pprint ["xyz error" %])
-                     ::m/complete #(clojure.pprint/pprint ["xyz complete"])}
-                    (->> (interval 1500)
-                         (take 5))))
+(def unsub-fn (ps/subscribe {::p/next #(clojure.pprint/pprint ["xyz next" %])
+                             ::p/error #(clojure.pprint/pprint ["xyz error" %])
+                             ::p/complete #(clojure.pprint/pprint ["xyz complete"])}
+                            (->> (po/from [1 2 3 4 5])
+                                 (po/buffer-count 2))))
 
-(def unsub-fn (prolagus.system/subscribe {::m/next #(clojure.pprint/pprint ["xyz next" %])
-                     ::m/error #(clojure.pprint/pprint ["xyz error" %])
-                     ::m/complete #(clojure.pprint/pprint ["xyz complete"])}
-                    (->> (interval 1500)
-                         (take 5)
-                         (tap #(clojure.pprint/pprint ["xyz tap" %]))
-                         (buffer-count 3 2))))
+(def unsub-fn (ps/subscribe {::p/next #(clojure.pprint/pprint ["xyz next" %])
+                             ::p/error #(clojure.pprint/pprint ["xyz error" %])
+                             ::p/complete #(clojure.pprint/pprint ["xyz complete"])}
+                            (->> (po/from [1 2 3 4 5 6 7 8])
+                                 (po/take 4))))
 
-(def unsub-fn (prolagus.system/subscribe {::m/next #(clojure.pprint/pprint ["xyz next" %])
-                     ::m/error #(clojure.pprint/pprint ["xyz error" %])
-                     ::m/complete #(clojure.pprint/pprint ["xyz complete"])}
-                    (let [a (->> (interval 2500)
-                                 (take 5)
-                                 (map #(+ % 100)))
-                          b (->> (interval 1500)
-                                 (take 5)
-                                 (map #(+ % 1000)))]
-                      (merge {:a a :b b}))))
+(def unsub-fn (ps/subscribe {::p/next #(clojure.pprint/pprint ["xyz next" %])
+                             ::p/error #(clojure.pprint/pprint ["xyz error" %])
+                             ::p/complete #(clojure.pprint/pprint ["xyz complete"])}
+                            (->> (po/interval 1500)
+                                 (po/take 5)
+                                 (po/tap #(clojure.pprint/pprint ["xyz tap" %]))
+                                 (po/buffer-count 3 2))))
 
-(def unsub-fn (prolagus.system/subscribe {::m/next #(clojure.pprint/pprint ["xyz next" %])
-                     ::m/error #(clojure.pprint/pprint ["xyz error" %])
-                     ::m/complete #(clojure.pprint/pprint ["xyz complete"])}
-                    (let [a (->> (interval 2500)
-                                 (take 5)
-                                 (map #(+ % 100)))
-                          b (->> (interval 1500)
-                                 (take 5)
-                                 (map #(+ % 1000)))]
-                      (merge [a b]))))
+(def unsub-fn (ps/subscribe {::p/next #(clojure.pprint/pprint ["xyz next" %])
+                             ::p/error #(clojure.pprint/pprint ["xyz error" %])
+                             ::p/complete #(clojure.pprint/pprint ["xyz complete"])}
+                            (let [a (->> (po/interval 2500)
+                                         (po/take 5)
+                                         (po/map #(+ % 100)))
+                                  b (->> (po/interval 1500)
+                                         (po/take 5)
+                                         (po/map #(+ % 1000)))]
+                              (po/merge {:a a :b b}))))
 
-(def unsub-fn (prolagus.system/subscribe {::m/next #(clojure.pprint/pprint ["xyz next" %])
-                     ::m/error #(clojure.pprint/pprint ["xyz error" %])
-                     ::m/complete #(clojure.pprint/pprint ["xyz complete"])}
-                    (let [a (->> (interval 2500)
-                                 (take 5)
-                                 (map #(+ % 10)))
-                          b (->> (interval 1500)
-                                 (take 5)
-                                 (map #(+ % 1000)))]
-                      (combine-latest {:a a :b b}))))
+(def unsub-fn (ps/subscribe {::p/next #(clojure.pprint/pprint ["xyz next" %])
+                             ::p/error #(clojure.pprint/pprint ["xyz error" %])
+                             ::p/complete #(clojure.pprint/pprint ["xyz complete"])}
+                            (let [a (->> (po/interval 2500)
+                                         (po/take 5)
+                                         (po/map #(+ % 100)))
+                                  b (->> (po/interval 1500)
+                                         (po/take 5)
+                                         (po/map #(+ % 1000)))]
+                              (po/merge [a b]))))
 
-(def xyz (prolagus.system/subscribe {::m/next #(clojure.pprint/pprint ["xyz next" %])
-                     ::m/error #(clojure.pprint/pprint ["xyz error" %])
-                     ::m/complete #(clojure.pprint/pprint ["xyz complete"])}
-                    (->> (from [1 2 3 4 5 6 7 8])
-                         (filter #(> % 4)))))
+(def unsub-fn (ps/subscribe {::p/next #(clojure.pprint/pprint ["xyz next" %])
+                             ::p/error #(clojure.pprint/pprint ["xyz error" %])
+                             ::p/complete #(clojure.pprint/pprint ["xyz complete"])}
+                            (let [a (->> (po/interval 2500)
+                                         (po/take 5)
+                                         (po/map #(+ % 10)))
+                                  b (->> (po/interval 1500)
+                                         (po/take 5)
+                                         (po/map #(+ % 1000)))]
+                              (po/combine-latest {:a a :b b}))))
+
+(def xyz (ps/subscribe {::p/next #(clojure.pprint/pprint ["xyz next" %])
+                        ::p/error #(clojure.pprint/pprint ["xyz error" %])
+                        ::p/complete #(clojure.pprint/pprint ["xyz complete"])}
+                       (->> (po/from [1 2 3 4 5 6 7 8])
+                            (po/filter #(> % 4)))))
+
+(def unsub-fn (ps/subscribe {::p/next #(clojure.pprint/pprint ["xyz next" %])
+                             ::p/error #(clojure.pprint/pprint ["xyz error" %])
+                             ::p/complete #(clojure.pprint/pprint ["xyz complete"])}
+                            (let [a (->> (po/interval 2500)
+                                         (po/take 5)
+                                         (po/map #(+ % 10)))
+                                  b (->> (po/interval 1500)
+                                         (po/take 5)
+                                         (po/map #(+ % 1000)))]
+                              (po/concat [a b]))))
+
+(def unsub-fn (ps/subscribe {::p/next #(clojure.pprint/pprint ["xyz next" %])
+                             ::p/error #(clojure.pprint/pprint ["xyz error" %])
+                             ::p/complete #(clojure.pprint/pprint ["xyz complete"])}
+                            (let [a (->> (po/from [1]))
+                                  b (->> (po/from [5]))]
+                              (po/concat [a]))))
 ```
