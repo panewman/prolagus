@@ -105,12 +105,30 @@
             [:=> [:cat [:fn fn?] [:map [::p/sub-fn [:fn fn?]]]]
              [:map [::p/map-fn [:fn fn?]] [::p/<observable [:map [::p/sub-fn [:fn fn?]]]] [::p/sub-fn fn?]]]])
 
+(defn start-with
+  [value <observable]
+  {::p/<observables [(from [value]) <observable]
+   ::p/sub-fn pi/concat-init})
+
+(ml/=> start-with [:function
+                   [:=> [:cat :any [:map [::p/sub-fn [:fn fn?]]]]
+                    [:map [::p/<observables [:or [:+ [:map [::p/sub-fn [:fn fn?]]]] [:map-of :keyword [:map [::p/sub-fn [:fn fn?]]]]]] [::p/sub-fn fn?]]]])
+
 (defn distinct-until-changed
   ([<observable]
    (distinct-until-changed = <observable))
   ([equal-fn <observable]
-   {::p/equal-fn equal-fn
+   {::p/map-fn identity
     ::p/<observable (->> <observable
+                         (start-with nil)
                          (buffer-count 2)
-                         (filter #(not (equal-fn (first %) (second %)))))
-    ::p/sub-fn pi/filter-init}))
+                         (filter #(not (equal-fn (first %) (second %))))
+                         (filter #(= 2 (count %)))
+                         (map second))
+    ::p/sub-fn pi/map-init}))
+
+(ml/=> distinct-until-changed [:function
+                               [:=> [:cat p/type-observable]
+                                [:map [::p/map-fn [:fn fn?]] [::p/<observable p/type-observable] [::p/sub-fn fn?]]]
+                               [:=> [:cat [:fn fn?] p/type-observable]
+                                [:map [::p/map-fn [:fn fn?]] [::p/<observable p/type-observable] [::p/sub-fn fn?]]]])

@@ -102,4 +102,11 @@ Example use:
                             (let [a (->> (po/from [1]))
                                   b (->> (po/from [5]))]
                               (po/concat [a]))))
+
+(def unsub-fn (ps/subscribe {::p/next #(clojure.pprint/pprint ["xyz next" %])
+                             ::p/error #(clojure.pprint/pprint ["xyz error" %])
+                             ::p/complete #(clojure.pprint/pprint ["xyz complete"])}
+                            (->> (po/from [1 2 3 4 5 6 7 8])
+                                 (po/map inc)
+                                 (po/start-with :a))))                              
 ```
